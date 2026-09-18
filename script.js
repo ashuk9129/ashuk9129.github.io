@@ -279,36 +279,80 @@ buttons.forEach(button => {
 // CONTACT FORM
 // =========================================
 
+// =========================================
+// CONTACT FORM - FORMSUBMIT
+// =========================================
 const contactForm = document.getElementById("contactForm");
+const contactStatus = document.getElementById("contactFormStatus");
+const contactSubmitButton = document.getElementById("contactSubmitButton");
 
 if (contactForm) {
-
-    contactForm.addEventListener("submit", function (event) {
-
+    contactForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        const name = document.getElementById("contactName").value.trim();
-        const email = document.getElementById("contactEmail").value.trim();
-        const subject = document.getElementById("contactSubject").value.trim();
-        const message = document.getElementById("contactMessage").value.trim();
-
-        if (!name || !email || !subject || !message) {
+        if (!contactForm.checkValidity()) {
+            contactForm.reportValidity();
             return;
         }
 
-        const emailBody =
-            `Hello Ashutosh,%0D%0A%0D%0A` +
-            `Name: ${encodeURIComponent(name)}%0D%0A` +
-            `Email: ${encodeURIComponent(email)}%0D%0A%0D%0A` +
-            `${encodeURIComponent(message)}`;
+        const originalButtonHTML = contactSubmitButton
+            ? contactSubmitButton.innerHTML
+            : "";
 
-        const mailtoURL =
-            `mailto:info.nexttechlabs@gmail.com` +
-            `?subject=${encodeURIComponent(subject)}` +
-            `&body=${emailBody}`;
+        if (contactSubmitButton) {
+            contactSubmitButton.disabled = true;
+            contactSubmitButton.innerHTML = `
+                <span>Sending...</span>
+                <i class="fa-solid fa-spinner fa-spin"></i>
+            `;
+        }
 
-        window.location.href = mailtoURL;
+        if (contactStatus) {
+            contactStatus.textContent = "Sending your message...";
+            contactStatus.style.color = "#a78bfa";
+        }
 
+        try {
+            const formData = new FormData(contactForm);
+
+            const response = await fetch(
+                "https://formsubmit.co/ajax/info.nexttechlabs@gmail.com",
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Accept: "application/json"
+                    }
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || result.success === false) {
+                throw new Error(result.message || "Unable to send message.");
+            }
+
+            if (contactStatus) {
+                contactStatus.textContent =
+                    "✓ Message sent successfully. I'll get back to you soon.";
+                contactStatus.style.color = "#4ade80";
+            }
+
+            contactForm.reset();
+
+        } catch (error) {
+            console.error("Contact form error:", error);
+
+            if (contactStatus) {
+                contactStatus.textContent =
+                    "Unable to send right now. Please email info.nexttechlabs@gmail.com directly.";
+                contactStatus.style.color = "#f87171";
+            }
+        } finally {
+            if (contactSubmitButton) {
+                contactSubmitButton.disabled = false;
+                contactSubmitButton.innerHTML = originalButtonHTML;
+            }
+        }
     });
-
 }
