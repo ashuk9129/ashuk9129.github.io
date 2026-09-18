@@ -1998,7 +1998,15 @@
                 <form
                     class="contact-form"
                     id="contactForm"
+                    action="https://formsubmit.co/info.nexttechlabs@gmail.com"
+                    method="POST"
                 >
+
+                    <!-- FormSubmit configuration -->
+                    <input type="hidden" name="_subject" value="New Portfolio Contact Message">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_replyto" value="email">
 
                     <!-- Name -->
                     <div class="form-group">
@@ -2078,6 +2086,7 @@
                     <button
                         type="submit"
                         class="contact-submit"
+                        id="contactSubmitButton"
                     >
 
                         <span>
@@ -2087,6 +2096,13 @@
                         <i class="fa-solid fa-arrow-right"></i>
 
                     </button>
+
+                    <p
+                        id="contactFormStatus"
+                        role="status"
+                        aria-live="polite"
+                        style="margin: 14px 0 0; font-size: 14px; line-height: 1.5; min-height: 21px;"
+                    ></p>
 
                 </form>
 
@@ -2149,7 +2165,7 @@
     </main>
 
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 <!-- =========================
      FOOTER
 ========================= -->
